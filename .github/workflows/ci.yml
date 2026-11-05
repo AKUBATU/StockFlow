@@ -1,0 +1,83 @@
+name: StockFlow checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Go and PostgreSQL integration tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: stockflow
+          POSTGRES_PASSWORD: stockflow
+          POSTGRES_DB: stockflow_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U stockflow -d stockflow_test"
+          --health-interval 3s
+          --health-timeout 3s
+          --health-retries 20
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      TEST_DATABASE_URL: postgres://stockflow:stockflow@localhost:5432/stockflow_test?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+          cache: false
+      - name: Run tests with PostgreSQL and the race detector
+        run: go test -mod=vendor -race -count=1 -v ./...
+      - name: Build API
+        run: go build -mod=vendor ./cmd/server
+
+  frontend:
+    name: TypeScript, Vitest and production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  compose:
+    name: Docker Compose startup and API smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start all services
+        run: docker compose up --build --detach --wait --wait-timeout 120
+      - name: Check frontend and API through Nginx
+        run: |
+          curl --fail --retry 20 --retry-delay 2 --retry-connrefused http://localhost:3000/api/health
+          python3 scripts/check-running-app.py http://localhost:3000
+      - name: Capture service logs
+        if: always()
+        run: docker compose logs --no-color
+      - name: Stop test services
+        if: always()
+        run: docker compose down --volumes

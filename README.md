@@ -4,6 +4,12 @@ Penyesuaian proyek Gudang ATK menjadi mini ERP sesuai `software-engineer-fullsta
 
 > PDF menyatakan AI code generation tidak diperbolehkan dalam tes tersebut. Implementasi ini dibuat dengan bantuan AI dan tidak boleh dinyatakan sebagai pekerjaan tanpa bantuan AI. Periksa ketentuan penyelenggara sebelum menggunakannya untuk submission.
 
+## Waktu pengerjaan
+
+- Mulai pengerjaan: **4 November 2026 (GMT+7)**, berdasarkan keterangan pemilik proyek.
+- Total waktu kerja aktif yang dilaporkan: **3 jam**, dicatat pada 5 November 2026. Ini merupakan waktu aktif, bukan selisih waktu kalender sejak tanggal mulai.
+- Riwayat Git mencatat saat source diunggah dan perubahan berikutnya. Tanggal mulai di atas adalah keterangan pengerjaan, bukan klaim bahwa tersedia commit sejak tanggal tersebut.
+
 ## Menjalankan dengan Docker
 
 Prasyarat: Docker Desktop dengan Linux containers sudah aktif. Port 3000, 55432, dan 18080 tersedia. Jalankan dari folder ini:
@@ -149,6 +155,8 @@ curl -X POST http://localhost:18080/api/products/1/stock \
 
 ## Pengujian
 
+Workflow `.github/workflows/ci.yml` menjalankan tes backend dengan PostgreSQL 17 dan race detector, TypeScript/Vitest/build frontend, serta startup Docker Compose dan smoke test melalui Nginx. Workflow dipicu oleh push ke `main`, pull request, atau manual. Keberadaan workflow bukan bukti pemeriksaannya lolos; lihat hasil aktual di [GitHub Actions](https://github.com/AKUBATU/StockFlow/actions).
+
 Backend integration test memerlukan database PostgreSQL sungguhan. Setiap tes membuat schema unik dan menghapus hanya schema tes itu. Akun tes harus diizinkan `CREATE SCHEMA`; gunakan database pengembangan/tes.
 
 PowerShell:
@@ -220,7 +228,7 @@ Source Laravel disimpan sebagai referensi dan tidak dijalankan oleh Compose. Tid
 ## Batasan dan pekerjaan berikutnya
 
 - Belum ada bonus Idempotency-Key, laporan penjualan harian, autentikasi, atau riwayat item berupa nama/SKU lama yang immutable saat katalog diedit.
-- Untuk produksi: pin digest image, tambah checksum migration, timeout query database, logging terstruktur, autentikasi/otorisasi, dan CI yang menjalankan integration tests serta browser tests.
+- Untuk produksi: pin digest image, tambah checksum migration, timeout query database, logging terstruktur, autentikasi/otorisasi, dan browser tests di CI.
 - Belum ada pengujian browser otomatis atau verifikasi visual di sesi ini.
 - Source proyek dipublikasikan ke https://github.com/AKUBATU/StockFlow. Direktori awal bukan repository Git; commit upload mencerminkan hasil yang sudah ada, bukan riwayat pengerjaan sepanjang hari.
-- Jam kerja manusia: tidak diketahui dan tidak diklaim. Implementasi ini dihasilkan dalam sesi bantuan AI; isi waktu pengerjaan pribadi secara jujur jika diminta penyelenggara.
+- Catatan waktu pengerjaan menggunakan keterangan pemilik proyek: mulai 4 November 2026, total kerja aktif 3 jam. Implementasi ini tetap didokumentasikan sebagai hasil pengembangan dengan bantuan AI.

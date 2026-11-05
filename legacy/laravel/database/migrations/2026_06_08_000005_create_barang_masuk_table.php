@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration; use Illuminate\Database\Schema\Blueprint; use Illuminate\Support\Facades\Schema;
+return new class extends Migration { public function up(){ Schema::create('barang_masuk', function(Blueprint $table){ $table->id(); $table->foreignId('barang_id')->constrained('barang')->cascadeOnDelete(); $table->foreignId('supplier_id')->nullable()->constrained('supplier')->nullOnDelete(); $table->date('tanggal'); $table->integer('jumlah'); $table->text('keterangan')->nullable(); $table->timestamps(); }); } public function down(){ Schema::dropIfExists('barang_masuk'); } };

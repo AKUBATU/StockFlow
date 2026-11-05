@@ -1,6 +1,6 @@
 # StockFlow — Inventory & Sales
 
-Penyesuaian proyek Gudang ATK menjadi mini ERP sesuai `software-engineer-fullstack.pdf`: **React + TypeScript strict (Vite), Go, PostgreSQL**, dengan frontend yang memakai API asli. Produk tetap memakai contoh kebutuhan ATK.
+Proyek Gudang ATK menjadi mini ERP sesuai `software-engineer-fullstack.pdf`: **React + TypeScript strict (Vite), Go, PostgreSQL**, dengan frontend yang memakai API asli. Produk tetap memakai contoh kebutuhan ATK.
 
 > PDF menyatakan AI code generation tidak diperbolehkan dalam tes tersebut. Implementasi ini dibuat dengan bantuan AI dan tidak boleh dinyatakan sebagai pekerjaan tanpa bantuan AI. Periksa ketentuan penyelenggara sebelum menggunakannya untuk submission.
 

@@ -195,7 +195,7 @@ Vitest mencakup validasi jumlah/harga/order, SKU ganda, format rupiah/waktu, par
 
 - TypeScript strict: **lolos**.
 - Unit test validasi order Go: **9 skenario lolos** (dijalankan terpisah tanpa dependency PostgreSQL).
-- Frontend: **20 tes Vitest lolos** dan bundle produksi berhasil dibuat melalui runner verifikasi lokal yang memakai TypeScript transpiler. Runner ini diperlukan karena sandbox Windows menolak subprocess esbuild dengan `EPERM`; jalur standar `npm run build`/`npm test` tetap perlu dicek di lingkungan normal.
+- Frontend: **20 tes Vitest lolos**, TypeScript strict lolos, dan jalur standar `npm run build` berhasil di GitHub Actions Linux. Verifikasi lokal juga lolos melalui runner khusus untuk keterbatasan subprocess sandbox Windows.
 - `docker compose config --quiet`: **lolos**.
 - PostgreSQL lokal proyek: **berjalan di port 55432**. Schema dan seed berhasil diterapkan melalui psql: 14 produk dan 2 order.
 - Konfigurasi backend: unit test pembacaan .env, prioritas environment, batas port dan flag migration **lolos**.
@@ -203,8 +203,9 @@ Vitest mencakup validasi jumlah/harga/order, SKU ganda, format rupiah/waktu, par
 - Seluruh tes Go: **lolos**, termasuk 9 integration tests PostgreSQL, validasi order, dan konfigurasi. Tes concurrency 20 order terhadap stok 7 dan 8 pembatalan bersamaan lolos pada PostgreSQL 18 lokal.
 - Koneksi frontend ke backend: **HTTP 200** pada `http://localhost:5173/api/health`; endpoint produk dan ringkasan mengembalikan data PostgreSQL asli.
 - PostgreSQL 18 mengembalikan SQLSTATE `23001` untuk pelanggaran FK RESTRICT; API sudah memetakannya ke `409 PRODUCT_HAS_HISTORY`, bersama SQLSTATE `23503`.
-- Mode `go test -race` belum berhasil dibangun karena GCC yang terpasang hanya mendukung 32-bit, sedangkan Go memakai amd64. Tes concurrency biasa tetap dijalankan dan lolos.
-- Docker Compose belum diuji end-to-end karena Docker engine tidak aktif; konfigurasi Compose lolos validasi.
+- Mode `go test -race -count=1 -v ./...`: **lolos di GitHub Actions Linux dengan PostgreSQL 17**, termasuk tes concurrency. Compiler C lokal Windows hanya mendukung 32-bit sehingga mode race dijalankan di CI.
+- Docker Compose: **build dan startup seluruh service lolos di GitHub Actions**. Smoke test melalui Nginx memverifikasi frontend, kesehatan API, produk, order seed, last movement, dan ringkasan dari PostgreSQL asli. Docker engine lokal Windows masih tidak aktif.
+- Bukti pemeriksaan CI pada commit `eb50c6e`: [StockFlow checks #41976836535](https://github.com/AKUBATU/StockFlow/actions/runs/41976836535) ? ketiga job berhasil pada 5 November 2026.
 
 ## Struktur dan proyek lama
 
